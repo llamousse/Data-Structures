@@ -1,6 +1,5 @@
 from doubly_linked_list import DoublyLinkedList
 
-
 class LRUCache:
     """
     Our LRUCache class keeps track of the max number of nodes it
@@ -11,12 +10,18 @@ class LRUCache:
     """
 
     def __init__(self, limit=10):
+        # self.limit = limit
+        # self.size = 0
+        # doubly-linked list that holds the key-value entries
+        # self.list = DoublyLinkedList()
+        # storage dict/cache
+        # self.storage = {}
+
+        # Lecture Solution
         self.limit = limit
         self.size = 0
-        # doubly-linked list that holds the key-value entries
-        self.list = DoublyLinkedList()
-        # storage dict/cache
-        self.storage = {}
+        self.order = DoublyLinkedList()
+        self.storage = dict()
 
     """
     Retrieves the value associated with the given key. Also
@@ -29,10 +34,19 @@ class LRUCache:
     def get(self, key):
         # if key-value pair doesn't exist in cache, return None
         # if key in self.storage:
+        # if key in self.storage:
+        #     val = self.storage[key]
+        #     self.list.move_to_end(val)
+        #     return val.value[1]
+        # else:
+        #     return None
+        
+        # Lecture Solution
+        # Pull the value out of the dict using the key
         if key in self.storage:
-            val = self.storage[key]
-            self.list.move_to_end(val)
-            return val.value[1]
+            node = self.storage[key]
+            self.order.move_to_front(node)
+            return node.value[1]
         else:
             return None
 
@@ -50,20 +64,52 @@ class LRUCache:
     def set(self, key, value):
         # if cache is already at max capacity
         # compare to self.limit of 10
-        if self.size == self.limit:
+        # if self.size == self.limit:
             # oldest entry needs to be removed to make room
-            del self.storage[self.list.head.value[0]]
-            self.list.delete(self.list.head)
+            # del self.storage[self.list.head.value[0]]
+            # self.list.delete(self.list.head)
 
         # if key already exists in the cache
         # overwrite the old value with new value
-        if key in self.storage:
-            self.list.delete(self.storage[key])
+        # if key in self.storage:
+        #     self.list.delete(self.storage[key])
 
         # add give key-value pair to cache/storage
-        self.list.add_to_tail((key, value))
+        # self.list.add_to_tail((key, value))
+        # self.size += 1
+        # self.storage[key] = self.list.tail
+
+        # Lecture Solution
+        # Check the length if at limit, delete last
+        # Check and see if key is in cache
+        # If it is in the cache, move to front and update value
+        # if self.size == self.limit
+        # If not, add to the front of the cache
+        # Defining tail as most recent and head as oldest
+        # self.order.add_to_tail((key, value))
+        # self.storage[key] = self.order.tail
+        # self.size += 1
+
+        # If it already exists, overwrite value
+        if key in self.storage:
+        # update dict
+            node = self.storage[key]
+            node.value = (key, value) # gets key value pair (tuple)
+            # Mark as most recently used - put in the head of the DLL
+            self.order.move_to_front(node)
+            return
+        # If at max capacity, dump oldest - remove from tail of DLL
+        if self.size == self.limit:
+            # dump the oldest:
+            # remove it form the linked list
+            # remove it from the dict
+            del self.storage[self.order.tail.value[0]]
+            self.order.remove_from_tail()
+            self.size -= 1
+        # Add pair to the cache - add to dict and add it nodes/DLL
+        self.order.add_to_head((key, value))
+        self.storage[key] = self.order.head
         self.size += 1
-        self.storage[key] = self.list.tail
 
 
 # class LRUCache:

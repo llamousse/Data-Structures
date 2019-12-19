@@ -15,6 +15,7 @@ class Queue:
         self.value = value
         self.size += 1
         self.storage.add_to_tail(value)
+        # self.storage.add_to_head(value)
 
     def dequeue(self):
         # remove and return an item from the front of the queue (head)
@@ -24,6 +25,7 @@ class Queue:
         else:
             self.size -= 1
             return self.storage.remove_from_head()
+            # return self.storage.remove_from_tail()
 
     def len(self):
         # returns number of items in queue
